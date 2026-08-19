@@ -16,27 +16,55 @@
 
 // Routing
 
-const express = require('express')
+// const express = require('express')
 
-require("dotenv").config();
+// require("dotenv").config();
 
+// const app = express();
+
+// app.listen(process.env.PORT, () => {
+//     console.log(`Server chal raha ha ${process.env.PORT} par`);
+// })
+
+// app.get('/', (req, res) => {
+//     res.send("Home page");
+// })
+// app.get('/products', (req, res) => {
+//     res.send("Sari products ki list")
+// })
+
+// app.post('/products', (req, res)=> {
+//     res.send("Product add hogaya ha apka");
+// })
+
+// app.get('/products/:id', (req, res) => {
+//     res.send(`Apne ye id ka ${req.params.id} product manga ha`)
+// })
+
+const express = require("express");
+require("dotenv").config()
 const app = express();
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server chal raha ha ${process.env.PORT} par`);
-})
+function requestTime(req, res, next) {
+    const date = new Date();
+    console.log(`Request aye: ${date}`)
+
+    if (req.url === "/admin") {
+        return res.send("Access Denied");
+    }
+    next()
+}
+
+app.use(requestTime)
 
 app.get('/', (req, res) => {
-    res.send("Home page");
+    res.send("Welcome to Home page");
 })
+
 app.get('/products', (req, res) => {
-    res.send("Sari products ki list")
+    res.send("Sari products");
 })
 
-app.post('/products', (req, res)=> {
-    res.send("Product add hogaya ha apka");
-})
-
-app.get('/products/:id', (req, res) => {
-    res.send(`Apne ye id ka ${req.params.id} product manga ha`)
+app.listen(process.env.PORT, () => {
+    console.log('Server chal raha');
 })
