@@ -41,30 +41,88 @@
 //     res.send(`Apne ye id ka ${req.params.id} product manga ha`)
 // })
 
-const express = require("express");
-require("dotenv").config()
+// Middleware
+
+// const express = require("express");
+// require("dotenv").config()
+// const app = express();
+
+// function requestTime(req, res, next) {
+//     const date = new Date();
+//     console.log(`Request aye: ${date}`)
+
+//     if (req.url === "/admin") {
+//         return res.send("Access Denied");
+//     }
+//     next()
+// }
+
+// app.use(requestTime)
+
+// app.get('/', (req, res) => {
+//     res.send("Welcome to Home page");
+// })
+
+// app.get('/products', (req, res) => {
+//     res.send("Sari products");
+// })
+
+// app.listen(process.env.PORT, () => {
+//     console.log('Server chal raha');
+// })
+
+
+// REST APIs (CRUD)
+
+const express = require('express');
+
+require("dotenv").config();
+
 const app = express();
 
-function requestTime(req, res, next) {
-    const date = new Date();
-    console.log(`Request aye: ${date}`)
+app.use(express.json()); // Ye ek middleware ha jo request say anay walay raw data ko Json may convert karta ha
 
-    if (req.url === "/admin") {
-        return res.send("Access Denied");
+let tasks = [
+    { id: 1, title: "Learning" },
+    { id: 2, title: "Read" },
+];
+
+app.get('/tasks', (req, res) => {
+    res.json(tasks);
+})
+
+app.get('/tasks/:id', (req, res) => {
+    const task = tasks.find(t => t.id === Number(req.params.id));
+    if (!task) {
+        return res.status(404).json({ message: `Is ID ka koi task nahi ha!` });
     }
-    next()
-}
-
-app.use(requestTime)
-
-app.get('/', (req, res) => {
-    res.send("Welcome to Home page");
+    res.json(task);
 })
 
-app.get('/products', (req, res) => {
-    res.send("Sari products");
+app.post('/tasks', (req, res) => {
+    const newTask = {
+        id: tasks.length + 1,
+        title: req.body.title
+    }
+    tasks.push(newTask);
+    res.status(201).json(newTask);
 })
 
-app.listen(process.env.PORT, () => {
-    console.log('Server chal raha');
+app.put('/tasks/:id', (req, res) => {
+    const task = tasks.find(t => t.id === Number(req.params.id));
+    if (!task) {
+        return res.status(404).json({ message: `Is Id ka koi task ha hi nahi update karny ko` });
+    }
+    task.title = req.body.title;
+    res.json(task);
+});
+
+app.delete('/tasks/:id', (req, res) => {
+    tasks = tasks.filter(task => task.id !== req.params.id);
+    res.json({ message: `task deleted successfully` });
 })
+
+app.listen(process.env.PORT, ()=> {
+    console.log(`Server chal raha ha ${process.env.PORT} par`);
+});
+
